@@ -30,4 +30,4 @@ web = requests.post('https://api.playhq.com/graphql', json={'query': query, 'var
 result = json.loads(web.text)['data']['discoverTeamFixture']
 
 for i in result:
-    print(F"{i['name']} - {i['provisionalDate']} @ {i['fixture']['games'][0]['allocation']['time']}, {i['fixture']['games'][0]['allocation']['court']['venue']['name'] } {i['fixture']['games'][0]['allocation']['court']['name']}")
+    print(F"{i['name']} - {i['provisionalDate']} @ {i['fixture']['games'][0]['allocation']['time']}, {i['fixture']['games'][0]['allocation']['court']['venue']['name'] } {i['fixture']['games'][0]['allocation']['court']['name']} --- {i['fixture']['games'][0]['home']['name']} VS {i['fixture']['games'][0]['away']['name']}")

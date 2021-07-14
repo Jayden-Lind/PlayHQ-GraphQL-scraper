@@ -2,3 +2,5 @@
 /bball-automation
 /chromedriver.exe
 /venv
+credentials.json
+token.json
