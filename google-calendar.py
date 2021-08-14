@@ -13,7 +13,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 team_id = ''
 #Game length in minutes
 game_length = 45
-
+tenant = 'basketball-victoria'
 
 def main():
     """Shows basic usage of the Google Calendar API.
@@ -52,7 +52,7 @@ def main():
         'dnt': '1',
         'sec-ch-ua-mobile': '?0',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'tenant': 'basketball-victoria',
+        'tenant': tenant,
         'content-type': 'application/json',
         'origin': 'https://www.playhq.com',
         'sec-fetch-site': 'same-site',
