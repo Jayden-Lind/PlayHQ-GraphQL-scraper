@@ -1,5 +1,5 @@
 # PlayHQ-GraphQL-scraper
-This allows you to obtain a list of upcoming games for a specific team in PlayHQ.
+This allows you to obtain a list of upcoming games for a specific team in [PlayHQ](https://www.playhq.com/).
 
 ```google-calendar.py```
 Lets you automatically populate it in your Google Calendar.
