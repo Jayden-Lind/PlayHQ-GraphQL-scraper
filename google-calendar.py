@@ -8,6 +8,17 @@ from google.oauth2.credentials import Credentials
 from datetime import datetime, timedelta
 from conf import headers, graphql
 import logging
+import argparse
+import re
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
+
+parser = argparse.ArgumentParser(
+    description="Insert your PlayHQ fixture into your Google calendar."
+)
+
+parser.add_argument("url", type=str, help="Fixture URL")
+arguments = parser.parse_args()
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -16,16 +27,25 @@ logging.basicConfig(
     force=True,
 )
 
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
-
-# team id can be grabbed from looking at your teams fixture, it is the last part of the URL
-team_id = "80e27305"
 # Game length in minutes
 game_length = 45
-tenant = "basketball-victoria"
 
 
-def main():
+def get_team_parameters(url: str):
+    """Parses the URL and grabs the necessary attributes for the GraphQL request
+
+    Args:
+        url (str): PlayHQ URL
+    """
+    parsed = re.findall(
+        r"https://www.playhq.com/(.*)/org/.*/(.*)", url, flags=re.IGNORECASE
+    )[0]
+    tenant = parsed[0]
+    team_id = parsed[1]
+    return tenant, team_id
+
+
+def calendar_login():
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
@@ -47,6 +67,14 @@ def main():
             token.write(creds.to_json())
 
     service = build("calendar", "v3", credentials=creds)
+    return service
+
+
+def main(team_url):
+
+    service = calendar_login()
+
+    tenant, team_id = get_team_parameters(url=team_url)
 
     variables = {"teamID": team_id}
 
@@ -57,7 +85,8 @@ def main():
         json={"query": graphql.graphql, "variables": variables},
         headers=headers.headers,
     )
-    result = json.loads(web.text)["data"]["discoverTeamFixture"]
+
+    results = json.loads(web.text)["data"]["discoverTeamFixture"]
 
     calendar_events = (
         service.events()
@@ -65,7 +94,7 @@ def main():
         .execute()
     )
 
-    for i in result:
+    for i in results:
 
         if i["fixture"]["games"]:
             start_time = datetime.strptime(
@@ -105,6 +134,7 @@ PlayHQ-GraphQL-Scraper""",
             }
 
         elif i["fixture"]["byes"]:
+            logging.info(f"{round} is a Bye")
             continue
 
         new = True
@@ -123,4 +153,4 @@ PlayHQ-GraphQL-Scraper""",
 
 
 if __name__ == "__main__":
-    main()
+    main(arguments.url)
